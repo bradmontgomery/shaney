@@ -1,5 +1,5 @@
 Mark V. Shaney
---------------
+==============
 
 This is a copy of the `shaney.py` Markov Chain implementation taken from
 [Yisong Yue's website](http://www.yisongyue.com/shaney/).
@@ -16,3 +16,12 @@ According to comments in the file, this python script was written by Greg McFarl
 with some editing by Joe Strout.
 
 I've also cleaned it up a bit.
+
+Usage
+-----
+
+Run the file, and pass it a path to some training text.
+
+    python shaney.py /path/to/text.txt
+
+
