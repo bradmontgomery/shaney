@@ -6,17 +6,28 @@ search for "Mark V.  Shaney" on the WWW for more info!
 """
 from __future__ import print_function
 
-import sys
 import random
+import re
 import string
+import sys
 
 
+def read(filename):
+    """Reads content from the file, does a little bit of cleanup, and returns
+    a list of words.
 
-def run(filename='', count=10):
-    if filename == '':
-        file = open(raw_input('Enter name of a textfile to read: '), 'r')
-    else:
-        file = open(filename, 'r')
+    """
+    content = open(filename, 'r').read()
+    # kill the unicode things (e.g. smart quotes)
+    content = content.decode('utf8').encode('ascii', 'ignore')
+    # Remove everything but words, major punctuation, and single quotes
+    content = re.sub('[^A-Za-z\.\?\!\' ]+', '', content)
+    return string.split(content)
+
+
+def run(filename=None, count=10):
+    if filename is None:
+        filename = raw_input('Enter name of a textfile to read: ')
 
     end_sentence = []
     data = {}
@@ -24,7 +35,7 @@ def run(filename='', count=10):
     prev2 = ''
 
     # Load up a dictionary of data from the input files.
-    for word in string.split(file.read()):
+    for word in read(filename):
         if prev1 != '' and prev2 != '':
             key = (prev2, prev1)
             if key in data:
@@ -35,7 +46,6 @@ def run(filename='', count=10):
                     end_sentence.append(key)
         prev2 = prev1
         prev1 = word
-    file.close()
 
     if end_sentence == []:
         print('Sorry, there are no sentences in the text.')
