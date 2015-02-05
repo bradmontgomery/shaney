@@ -1,8 +1,12 @@
 Mark V. Shaney
 ==============
 
-This is a copy of the `shaney.py` Markov Chain implementation taken from
-[Yisong Yue's website](http://www.yisongyue.com/shaney/).
+This started out as a copy of the `shaney.py` Markov Chain implementation taken
+from [Yisong Yue's website](http://www.yisongyue.com/shaney/).
+
+I've refactored the code a bit, but the important parts are still pretty much
+the same.
+
 
 That site describes shaney as:
 
