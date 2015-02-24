@@ -60,7 +60,7 @@ def analyze_text(data, verbose=True):
     if avg_sample_size < 2:
         write("--> This is a small sample size, and is probably like a poor "
               "at generating text.", verbose)
-    if avg_sample_size > 2:
+    elif avg_sample_size > 2:
         write("--> This looks like a decent sample size.", verbose)
     else:
         write("--> This looks like a good sample size.", verbose)
