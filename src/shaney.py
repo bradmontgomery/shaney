@@ -12,6 +12,12 @@ import string
 import sys
 
 
+def write(msg, verbose=False):
+    """Write a message to standard out if verbose is true."""
+    if verbose:
+        sys.stdout.write(u"{0}\n".format(msg))
+
+
 def read(filename):
     """Reads content from the file, does a little bit of cleanup, and returns
     a list of words.
@@ -27,7 +33,7 @@ def read(filename):
     return string.split(content)
 
 
-def train(filename):
+def train(filename, verbose=False):
     """Reads a file, building the data model used to generate text.
     Returns trained data; a dictionary of the form:
 
@@ -35,6 +41,7 @@ def train(filename):
           endings: [] }
 
     """
+    write("Training...")
     endings = []  # Pairs of words that end a sentence
     data = {}  # Key: Pairs of words, Values: List of words that follow those pairs.
 
@@ -88,7 +95,7 @@ def generate(data, count=10):
     return generated_strings
 
 
-def run(filename=None, count=10):
+def run(filename=None, count=10, verbose=False):
     """Given a path to a file, read it, build a library, and generate 10
     sentences from it, printing them.
     """
@@ -96,14 +103,12 @@ def run(filename=None, count=10):
     if filename is None:
         filename = raw_input('Enter name of a textfile to read: ')
 
-    data = train(filename)
-    results = generate(data, count)
+    data = train(filename, verbose)
+    results = generate(data, count, verbose)
     for r in results:
-        print("\n{0}".format(r))
+        write("\n{0}".format(r), verbose)
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        run(sys.argv[1])  # accept a command-line filename
-    else:
-        run()
+    filename = None if len(sys.argv) < 2 else sys.argv[1]
+    run(filename, verbose=True)  # accept a command-line filename
