@@ -10,11 +10,13 @@ import random
 import re
 import string
 import sys
+import textwrap
 
 
 def write(msg, verbose=False):
     """Write a message to standard out if verbose is true."""
     if verbose:
+        msg = u"\n".join(textwrap.wrap(msg, width=80))
         sys.stdout.write(u"{0}\n".format(msg))
 
 
@@ -142,7 +144,8 @@ def run(filename=None, count=10, verbose=False):
     data = train(filename, verbose)
     results = generate(data, count, verbose)
     for r in results:
-        write("\n* {0}".format(r), verbose)
+        write("{0}".format(r.strip()), verbose)
+        write("\n", verbose)
     write("-" * 80, verbose)
     return results
 
