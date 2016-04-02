@@ -5,7 +5,7 @@ This started out as a copy of the `shaney.py` Markov Chain implementation taken
 from [Yisong Yue's website](http://www.yisongyue.com/shaney/).
 
 I've refactored the code a bit, but the important parts are still pretty much
-the same.
+the same. This version works with Python 3.
 
 
 That site describes shaney as:
