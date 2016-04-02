@@ -4,11 +4,8 @@ shaney.py by Greg McFarlane some editing by Joe Strout
 search for "Mark V.  Shaney" on the WWW for more info!
 
 """
-from __future__ import print_function
-
 import random
 import re
-import string
 import sys
 import textwrap
 
@@ -31,12 +28,13 @@ def read(filename, verbose=False):
 
     content = open(filename, 'r').read()
     # kill the unicode things (e.g. smart quotes)
-    content = content.decode('utf8').encode('ascii', 'ignore')
+    content = content.encode('ascii', 'ignore').decode('utf8')
+
     # condense all whitespace chars into a single space
     content = re.sub('\s+', ' ', content)
     # Remove everything but words, major punctuation, and single quotes
     content = re.sub('[^A-Za-z\.\?\!\' ]+', '', content)
-    content = string.split(content)
+    content = content.split()
 
     write("Read {0} lines.".format(len(content)), verbose)
     return content
@@ -139,12 +137,12 @@ def run(filename=None, count=10, verbose=False):
     """
     write("Running in verbose mode.", verbose)
     if filename is None:
-        filename = raw_input('Enter name of a textfile to read: ')
+        filename = input('Enter name of a textfile to read: ')
 
     data = train(filename, verbose)
     results = generate(data, count, verbose)
     for r in results:
-        write("{0}".format(r.strip()), verbose)
+        write("* {0}".format(r.strip()), verbose)
         write("\n", verbose)
     write("-" * 80, verbose)
     return results
