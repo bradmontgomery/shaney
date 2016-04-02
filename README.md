@@ -29,3 +29,12 @@ Run the file, and pass it a path to some training text.
     python shaney.py /path/to/text.txt
 
 
+Web App
+-------
+
+There's also a simple web app that will display quotes generated from training
+data. Run it with:
+
+    python web.py /path/to/text.txt
+
+
