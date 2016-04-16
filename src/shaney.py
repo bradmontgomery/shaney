@@ -65,6 +65,16 @@ def analyze_text(data, verbose=True):
     write("-" * 80, verbose)
 
 
+def _is_ending(word):
+    # Things I don't wont to consider an ending.
+    non_endings = ['mr.', 'mrs.', 'ms.', 'dr.', 'phd.', 'd.c.', '.', 'u.s.', ' .']
+    if word.lower() in non_endings:
+        return True
+
+    endings = ['.', '?', '!']  # Things we DO consider sentence endings.
+    return any([word.endswith(punct) for punct in endings])
+
+
 def train(filename, verbose=False):
     """Reads a file, building the data model used to generate text.
     Returns trained data; a dictionary of the form:
@@ -89,7 +99,7 @@ def train(filename, verbose=False):
                 data[key].append(word)
             else:
                 data[key] = [word]
-                if any([prev1.endswith(punct) for punct in ['.', '?', '!']]):
+                if _is_ending(word):
                     endings.append(key)
         prev2 = prev1
         prev1 = word
