@@ -67,9 +67,12 @@ def analyze_text(data, verbose=True):
 
 def _is_ending(word):
     # Things I don't wont to consider an ending.
-    non_endings = ['mr.', 'mrs.', 'ms.', 'dr.', 'phd.', 'd.c.', '.', 'u.s.', ' .']
+    non_endings = [
+        'mr.', 'mrs.', 'ms.', 'dr.', 'phd.', 'd.c.', 'u.s.', 'a.m.', 'p.m.',
+        '.',
+    ]
     if word.lower() in non_endings:
-        return True
+        return False
 
     endings = ['.', '?', '!']  # Things we DO consider sentence endings.
     return any([word.endswith(punct) for punct in endings])
@@ -99,13 +102,14 @@ def train(filename, verbose=False):
                 data[key].append(word)
             else:
                 data[key] = [word]
-                if _is_ending(word):
+                if _is_ending(prev1):
                     endings.append(key)
         prev2 = prev1
         prev1 = word
     assert endings != [], "Sorry, there are no sentences in the text."
     if verbose:
         analyze_text(data)
+
     return {'content': data, 'endings': endings}
 
 
