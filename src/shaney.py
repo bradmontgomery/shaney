@@ -3,6 +3,9 @@
 shaney.py by Greg McFarlane some editing by Joe Strout
 search for "Mark V.  Shaney" on the WWW for more info!
 
+Original code listed without a license, here:
+http://www.strout.net/info/coding/python/shaney.py
+
 """
 import random
 import re
