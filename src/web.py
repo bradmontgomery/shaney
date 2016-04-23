@@ -1,10 +1,11 @@
-import sys
+import argparse
 
 from flask import Flask
 from flask import render_template
 from shaney import train, generate
 
 
+global LIMIT  # Limit the number of words displayed.
 app = Flask(__name__)
 shaney_bot = None
 
@@ -28,13 +29,21 @@ def hello_world():
         quote = shaney_bot.quote()
     else:
         quote = "oops."
+
+    if LIMIT:  # limit the number of words in the quote
+        words = quote.split()
+        while len(words) > LIMIT:
+            words = words[:-1]
+        quote = " ".join(words)
     return render_template('index.html', quote=quote)
 
 
 if __name__ == '__main__':
-    filename = None if len(sys.argv) < 2 else sys.argv[1]
-    if filename is not None:
-        shaney_bot = Shaney(filename)
-        app.run()
-    else:
-        print("\n\nUsage: python web.py /path/to/content.txt\n\n")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filename", help="Path to the training text.", type=str)
+    parser.add_argument("-l", "--limit", help="Number of words to display", type=int, default=None)
+    args = parser.parse_args()
+
+    LIMIT = args.limit
+    shaney_bot = Shaney(args.filename)
+    app.run()
