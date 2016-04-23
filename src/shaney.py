@@ -29,7 +29,12 @@ def read(filename, verbose=False):
     write("-" * 80, verbose)
     write("Reading File.", verbose)
 
-    content = open(filename, 'r').read()
+    try:
+        content = open(filename, 'r').read()
+    except Exception:
+        # assume we were just given content?
+        content = filename
+
     # kill the unicode things (e.g. smart quotes)
     content = content.encode('ascii', 'ignore').decode('utf8')
 
