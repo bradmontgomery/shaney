@@ -36,6 +36,17 @@ def read(filename, verbose=False):
     content = re.sub('[^A-Za-z\.\?\!\' ]+', '', content)
     content = content.split()
 
+    def _clean(word):
+        """A function that helps us filter out certain words."""
+        return (
+            not word.startswith('http') and  # exclude links
+            not word.startswith('@') and  # e.g. tweets, remove mentions
+            not (word.startswith('&') and len(word) > 1) and
+            word != 'RT' and  # and this
+            word != '...' and
+            word != 'amp'
+        )
+    content = list(filter(_clean, content))
     write("Read {0} lines.".format(len(content)), verbose)
     return content
 
@@ -66,15 +77,22 @@ def analyze_text(data, verbose=True):
 
 
 def _is_ending(word):
-    # Things I don't wont to consider an ending.
+    """How to determin if a word ends a sentence. We can't just look at
+    punctuation because things like Mr. or Dr. might be in the middle of
+    a sentence. (note: this is clunky, yes, but mean to be simple & OK for
+    most cases).
+
+    """
+    # Things that should not be considered as an ending.
     non_endings = [
         'mr.', 'mrs.', 'ms.', 'dr.', 'phd.', 'd.c.', 'u.s.', 'a.m.', 'p.m.',
-        '.',
+        '.', '.net', 'no.', 'i.e.', 'e.g.', 'st.',
     ]
-    if word.lower() in non_endings:
+    is_number = bool(re.match(r'\d+\.\d+', word))  # Numbers e.g. "4.5"
+    if is_number or word.lower().strip() in non_endings:
         return False
 
-    endings = ['.', '?', '!']  # Things we DO consider sentence endings.
+    endings = ['.', '?', '!', ';']  # Things we DO consider sentence endings.
     return any([word.endswith(punct) for punct in endings])
 
 
