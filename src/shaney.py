@@ -40,6 +40,9 @@ def read(filename, verbose=False):
 
     # condense all whitespace chars into a single space
     content = re.sub('\s+', ' ', content)
+    content = content.replace(u"\u2018", "'").replace(u"\u2019", "'")
+    content = content.replace(u"\u201c","").replace(u"\u201d", "")
+
     # Remove everything but words, major punctuation, and single quotes
     content = re.sub('[^A-Za-z\.\?\!\' ]+', '', content)
     content = content.split()
