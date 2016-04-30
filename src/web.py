@@ -2,7 +2,8 @@ import argparse
 
 from flask import Flask
 from flask import render_template
-from shaney import train, generate
+from shaney import train3 as train
+from shaney import generate3 as generate
 
 
 global LIMIT  # Limit the number of words displayed.
@@ -41,7 +42,13 @@ def hello_world():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", help="Path to the training text.", type=str)
-    parser.add_argument("-l", "--limit", help="Number of words to display", type=int, default=None)
+    parser.add_argument(
+        "-l",
+        "--limit",
+        help="Number of words to display",
+        type=int,
+        default=None
+    )
     args = parser.parse_args()
 
     LIMIT = args.limit
