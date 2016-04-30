@@ -2,8 +2,8 @@ import argparse
 
 from flask import Flask
 from flask import render_template
-from shaney import train3 as train
-from shaney import generate3 as generate
+
+import shaney
 
 
 global LIMIT  # Limit the number of words displayed.
@@ -12,12 +12,17 @@ shaney_bot = None
 
 
 class Shaney:
-    def __init__(self, file):
-        self.data = train(file)
+    def __init__(self, file, order=2):
+        if order == 3:
+            self.data = shaney.train3(file)
+            self._generate = shaney.generate3
+        else:
+            self.data = shaney.train(file)
+            self._generate = shaney.generate
 
     def quote(self):
         try:
-            quotes = generate(self.data, count=1, verbose=False)
+            quotes = self._generate(self.data, count=1, verbose=False)
             quote = quotes[0].strip()
         except:
             quote = "oops. I failed to generate a quote. Try again?"
@@ -43,6 +48,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", help="Path to the training text.", type=str)
     parser.add_argument(
+        "-o",
+        "--order",
+        help="Order: how many words to consider at a time? 2 or 3",
+        type=int,
+        default=2
+    )
+    parser.add_argument(
         "-l",
         "--limit",
         help="Number of words to display",
@@ -52,5 +64,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     LIMIT = args.limit
-    shaney_bot = Shaney(args.filename)
+    shaney_bot = Shaney(args.filename, args.order)
     app.run()
