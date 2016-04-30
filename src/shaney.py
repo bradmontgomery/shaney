@@ -3,14 +3,30 @@
 shaney.py by Greg McFarlane some editing by Joe Strout
 search for "Mark V.  Shaney" on the WWW for more info!
 
+The original code implements a 2nd-order markov chain, where output is
+based on the two previous inputs. This is implemented in this module
+using the two functions:
+
+- train -- train the markov chain on some input text.
+- generate -- generate text based on the training data.
+
+Additionally, a 3rd-order markov chain is implemented here as well, in
+the following functions:
+
+- train3 -- train the markov chain on some input text.
+- generate3 -- generate text based on the training data.
+
 Original code listed without a license, here:
 http://www.strout.net/info/coding/python/shaney.py
 
 """
+import argparse
 import random
 import re
 import sys
 import textwrap
+
+from string import ascii_lowercase
 
 
 def write(msg, verbose=False):
@@ -41,7 +57,7 @@ def read(filename, verbose=False):
     # condense all whitespace chars into a single space
     content = re.sub('\s+', ' ', content)
     content = content.replace(u"\u2018", "'").replace(u"\u2019", "'")
-    content = content.replace(u"\u201c","").replace(u"\u201d", "")
+    content = content.replace(u"\u201c", "").replace(u"\u201d", "")
 
     # Remove everything but words, major punctuation, and single quotes
     content = re.sub('[^A-Za-z\.\?\!\' ]+', '', content)
@@ -99,6 +115,9 @@ def _is_ending(word):
         'mr.', 'mrs.', 'ms.', 'dr.', 'phd.', 'd.c.', 'u.s.', 'a.m.', 'p.m.',
         '.', '.net', 'no.', 'i.e.', 'e.g.', 'st.',
     ]
+    # Peoples' initials are not endings.
+    non_endings.extend(["{}.".format(letter) for letter in ascii_lowercase])
+
     is_number = bool(re.match(r'\d+\.\d+', word))  # Numbers e.g. "4.5"
     if is_number or word.lower().strip() in non_endings:
         return False
@@ -174,7 +193,85 @@ def generate(data, count=10, verbose=False):
     return generated_strings
 
 
-def run(filename=None, count=10, verbose=False):
+def train3(filename, verbose=False):
+    """Reads a file, building the data model used to generate text using a 3rd-
+    order markof chain. That is, looking at 3 words at a time instead of a pair.
+
+    Returns trained data; a dictionary of the form:
+
+        { content: {},
+          endings: [] }
+
+    """
+    write("Training...", verbose)
+    endings = []  # Words (keys) that end a sentence
+    # Our Data Dict:
+    # - Key: Triples of words
+    # - Values: List of words that follow those.
+    data = {}
+
+    # and here's the group of words that we encounter in a text.
+    prev1 = ''
+    prev2 = ''
+    prev3 = ''
+
+    # Load up a dictionary of data from the input files.
+    for word in read(filename, verbose):
+
+        if prev1 != '' and prev2 != '' and prev3 != '':
+            key = (prev3, prev2, prev1)
+
+            if key in data:
+                data[key].append(word)
+            else:
+                data[key] = [word]
+                if _is_ending(key[-1]):
+                    endings.append(key)
+
+        prev3 = prev2
+        prev2 = prev1
+        prev1 = word
+
+    assert endings != [], "Sorry, there are no sentences in the text."
+    if verbose:
+        analyze_text(data)
+
+    return {'content': data, 'endings': endings}
+
+
+def generate3(data, count=10, verbose=False):
+    """Given the 3rd-order data library (dict of 'content' and 'endings' keys),
+    this will generate text strings.
+
+    Returns a list of `count` strings.
+
+    """
+    write("Generating output:", verbose)
+
+    output = ""
+    generated_strings = []
+    key = None
+
+    while True:
+        if key and key in data['content']:
+            word = random.choice(data['content'][key])
+            output = "{0}{1} ".format(output, word)
+
+            key = (key[1], key[2], word)
+            if key in data['endings']:
+                generated_strings.append(output)
+                output = ""
+                key = random.choice(data['endings'])
+                count = count - 1
+                if count <= 0:
+                    break
+        else:
+            key = random.choice(data['endings'])
+
+    return generated_strings
+
+
+def run(filename=None, count=10, verbose=False, order=2):
     """Given a path to a file, read it, build a library, and generate 10
     sentences from it, printing them.
     """
@@ -182,8 +279,13 @@ def run(filename=None, count=10, verbose=False):
     if filename is None:
         filename = input('Enter name of a textfile to read: ')
 
-    data = train(filename, verbose)
-    results = generate(data, count, verbose)
+    if order == 2:
+        data = train(filename, verbose)
+        results = generate(data, count, verbose)
+    elif order == 3:
+        data = train3(filename, verbose)
+        results = generate3(data, count, verbose)
+
     for r in results:
         write("* {0}".format(r.strip()), verbose)
         write("\n", verbose)
@@ -192,5 +294,20 @@ def run(filename=None, count=10, verbose=False):
 
 
 if __name__ == '__main__':
-    filename = None if len(sys.argv) < 2 else sys.argv[1]
-    run(filename, verbose=True)  # accept a command-line filename
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filename", help="Path to the training text.", type=str)
+    parser.add_argument(
+        "-o",
+        "--order",
+        help="Order: how many words to consider at a time? 2 or 3",
+        type=int,
+        default=2
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        help="Run in verbose mode",
+        action='store_true'
+    )
+    args = parser.parse_args()
+    run(args.filename, verbose=args.verbose, order=args.order)
