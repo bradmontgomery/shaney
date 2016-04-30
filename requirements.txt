@@ -1,0 +1,4 @@
+Flask==0.10.1
+ipdb==0.9.3
+ipython==4.1.2
+Pillow==3.2.0
