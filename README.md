@@ -26,7 +26,15 @@ Usage
 
 Run the file, and pass it a path to some training text.
 
-    python shaney.py /path/to/text.txt
+    python shaney.py /path/to/text.txt -v
+
+
+For additional options, run `python shaney.py -h`. Notably, this script
+implements both a 2nd-order (the original) and 3rd-order markov chain. To
+run the 3rd-order chain, use:
+
+    python shaney.py /path/to/text.txt -v -o 3
+
 
 
 Web App
