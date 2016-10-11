@@ -113,7 +113,9 @@ def _is_ending(word):
     # Things that should not be considered as an ending.
     non_endings = [
         'mr.', 'mrs.', 'ms.', 'dr.', 'phd.', 'd.c.', 'u.s.', 'a.m.', 'p.m.',
-        '.', '.net', 'no.', 'i.e.', 'e.g.', 'st.',
+        '.', '.net', 'no.', 'i.e.', 'e.g.', 'st.', 'lt.', 'n.c.', 'adm.',
+        'u.n.', 'jr.', 'rep.', 'u.a.e.', 'u.k.', 's.m.a.r.t.', 'sen.', 'inc.',
+        'u.i.', 'u.x.', 'sr.', 's.m.', 'ph.',
     ]
     # Peoples' initials are not endings.
     non_endings.extend(["{}.".format(letter) for letter in ascii_lowercase])
