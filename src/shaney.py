@@ -278,7 +278,7 @@ def generate3(data, count=10, verbose=False):
     return generated_strings
 
 
-def run(filename=None, count=10, verbose=False, order=2):
+def run(filename=None, count=10, verbose=False, order=2, interactive=False):
     """Given a path to a file, read it, build a library, and generate 10
     sentences from it, printing them.
     """
@@ -288,21 +288,35 @@ def run(filename=None, count=10, verbose=False, order=2):
 
     if order == 2:
         data = train(filename, verbose)
-        results = generate(data, count, verbose)
+        generate_func = generate
     elif order == 3:
         data = train3(filename, verbose)
-        results = generate3(data, count, verbose)
+        generate_func = generate3
 
-    for r in results:
-        write("* {0}".format(r.strip()), verbose)
-        write("\n", verbose)
-    write("-" * 80, verbose)
+    selection = ''
+    while selection.lower() != 'q':
+        write("\n\n", verbose)
+        results = generate_func(data, count, verbose)
+        for r in results:
+            write("* {0}".format(r.strip()), verbose)
+            write("\n", verbose)
+        write("-" * 80, verbose)
+        if interactive:
+            selection = input("Press Enter key to continue, Q to quit: ")
+        else:
+            selection = 'q'
     return results
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", help="Path to the training text.", type=str)
+    parser.add_argument(
+        "-i",
+        "--interactive",
+        help="Run in interactive mode",
+        action='store_true'
+    )
     parser.add_argument(
         "-o",
         "--order",
@@ -317,4 +331,4 @@ if __name__ == '__main__':
         action='store_true'
     )
     args = parser.parse_args()
-    run(args.filename, verbose=args.verbose, order=args.order)
+    run(args.filename, verbose=args.verbose, order=args.order, interactive=args.interactive)
