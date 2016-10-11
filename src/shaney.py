@@ -137,7 +137,7 @@ def train(filename, verbose=False):
 
     """
     write("Training...", verbose)
-    endings = []  # Pairs of words that end a sentence
+    endings = set()  # Pairs of words that end a sentence
     # Our Data Dict:
     # - Key: Pairs of words
     # - Values: List of words that follow those pairs.
@@ -156,16 +156,16 @@ def train(filename, verbose=False):
             else:
                 data[key] = [word]
                 if _is_ending(key[-1]):
-                    endings.append(key)
+                    endings.add(key)
 
         prev2 = prev1
         prev1 = word
 
-    assert endings != [], "Sorry, there are no sentences in the text."
+    assert endings != set(), "Sorry, there are no sentences in the text."
     if verbose:
         analyze_text(data)
 
-    return {'content': data, 'endings': endings}
+    return {'content': data, 'endings': list(endings)}
 
 
 def generate(data, count=10, verbose=False):
