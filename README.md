@@ -1,6 +1,11 @@
 Mark V. Shaney
 ==============
 
+_SLIDES: I've given a few talks at meetups and conferences on Markov Chains,
+most recently at DevSpace 2016. You can find [those slides on speakerdeck](https://speakerdeck.com/bkmontgomery/fun-with-markov-chains-devspace-2016)_.
+
+----
+
 This started out as a copy of the `shaney.py` Markov Chain implementation taken
 from [Yisong Yue's website](http://www.yisongyue.com/shaney/).
 
