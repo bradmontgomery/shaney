@@ -29,7 +29,8 @@ I've also cleaned it up a bit.
 Usage
 -----
 
-Run the file, and pass it a path to some training text.
+Run the file, and pass it a path to some training text. This should work fine
+with a default installation of Python 3.
 
     python shaney.py /path/to/text.txt -v
 
@@ -46,7 +47,11 @@ Web App
 -------
 
 There's also a simple web app that will display quotes generated from training
-data. Run it with:
+data. This requires a few additional dependences (see `requirements.txt`).
+
+    pip install -r requirements.txt
+
+Run the we application with:
 
     python web.py /path/to/text.txt
 
