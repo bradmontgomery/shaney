@@ -1,0 +1,8 @@
+# web.py requirements
+Flask
+
+# Additional Development requirements
+pip-tools
+isort
+black
+flake8 
