@@ -1,10 +1,8 @@
 import argparse
 
-from flask import Flask
-from flask import render_template
+from flask import Flask, render_template
 
 import shaney
-
 
 global LIMIT  # Limit the number of words displayed.
 app = Flask(__name__)
@@ -24,13 +22,13 @@ class Shaney:
         try:
             quotes = self._generate(self.data, count=1, verbose=False)
             quote = quotes[0].strip()
-        except:
+        except Exception:
             quote = "oops. I failed to generate a quote. Try again?"
         return quote
 
 
-@app.route('/')
-def hello_world():
+@app.route("/")
+def index():
     if shaney_bot:
         quote = shaney_bot.quote()
     else:
@@ -41,10 +39,10 @@ def hello_world():
         while len(words) > LIMIT:
             words = words[:-1]
         quote = " ".join(words)
-    return render_template('index.html', quote=quote)
+    return render_template("index.html", quote=quote)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", help="Path to the training text.", type=str)
     parser.add_argument(
@@ -52,14 +50,10 @@ if __name__ == '__main__':
         "--order",
         help="Order: how many words to consider at a time? 2 or 3",
         type=int,
-        default=2
+        default=2,
     )
     parser.add_argument(
-        "-l",
-        "--limit",
-        help="Number of words to display",
-        type=int,
-        default=None
+        "-l", "--limit", help="Number of words to display", type=int, default=None
     )
     args = parser.parse_args()
 
